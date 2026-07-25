@@ -11,10 +11,498 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Matrix Code Background */
+        .matrix-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #030712 0%, #0a1929 50%, #061621 100%);
+            overflow: hidden;
+        }
+
+        .matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+        }
+
+        /* Gradient overlay for better text readability */
+        .matrix-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, transparent 0%, rgba(3, 7, 18, 0.6) 100%);
+            pointer-events: none;
+        }
+
+        /* Enhanced color scheme - Blue/Green/Teal */
+        :root {
+            --primary: #00d9ff;
+            --primary-hover: #00b8d4;
+            --primary-glow: rgba(0, 217, 255, 0.25);
+            
+            --accent: #00ff9f;
+            --accent-glow: rgba(0, 255, 159, 0.2);
+            
+            --secondary: #0080ff;
+            --secondary-glow: rgba(0, 128, 255, 0.15);
+            
+            --success: #00ff9f;
+            --text-primary: #e0f7ff;
+            --text-secondary: #7dd3fc;
+            --text-muted: #38bdf8;
+            
+            --glow-1-color: rgba(0, 217, 255, 0.3);
+            --glow-2-color: rgba(0, 255, 159, 0.25);
+            --glow-3-color: rgba(0, 128, 255, 0.2);
+        }
+
+        /* Glowing text effect */
+        .glow-text {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary), 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .glow-text-accent {
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0, 255, 159, 0.5);
+        }
+
+        /* Neon borders */
+        .neon-border {
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 10px var(--primary), inset 0 0 10px rgba(0, 217, 255, 0.1);
+        }
+
+        /* Interactive hover glow effect */
+        .interactive-glow:hover {
+            box-shadow: 0 0 20px var(--primary), 0 0 40px rgba(0, 217, 255, 0.4);
+            border-color: var(--accent);
+        }
+
+        /* Animated background particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Cyberpunk glitch effect */
+        @keyframes glitch {
+            0% {
+                text-shadow: -2px 0 #00ff9f, 2px 0 #0080ff;
+            }
+            20% {
+                text-shadow: 2px 0 #00ff9f, -2px 0 #0080ff;
+            }
+            40% {
+                text-shadow: -2px 0 #0080ff, 2px 0 #00ff9f;
+            }
+            60% {
+                text-shadow: 2px 0 #0080ff, -2px 0 #00ff9f;
+            }
+            80% {
+                text-shadow: -2px 0 #00ff9f, 2px 0 #0080ff;
+            }
+            100% {
+                text-shadow: 2px 0 #00ff9f, -2px 0 #0080ff;
+            }
+        }
+
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+
+        /* Pulsing neon effect */
+        @keyframes neon-pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px var(--primary), inset 0 0 10px rgba(0, 217, 255, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px var(--primary), inset 0 0 20px rgba(0, 217, 255, 0.2);
+            }
+        }
+
+        .neon-pulse {
+            animation: neon-pulse 2s infinite;
+        }
+
+        /* Scan line effect */
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.8), transparent);
+            z-index: 100;
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Enhanced cards with neon effect */
+        .glass-card {
+            background: rgba(6, 22, 33, 0.7);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .glass-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), inset 0 0 20px rgba(0, 217, 255, 0.05);
+        }
+
+        /* Tech-style buttons */
+        .btn-tech {
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-tech::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-tech:hover::before {
+            left: 100%;
+        }
+
+        .btn-tech:hover {
+            box-shadow: 0 0 15px var(--primary), inset 0 0 15px rgba(0, 217, 255, 0.1);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Data flow animation */
+        @keyframes data-flow {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        .data-flow {
+            background: linear-gradient(45deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            background-size: 200% 200%;
+            animation: data-flow 3s linear infinite;
+        }
+
+        /* Color shift effect */
+        @keyframes color-shift {
+            0% {
+                color: #00d9ff;
+                text-shadow: 0 0 10px #00d9ff;
+            }
+            50% {
+                color: #00ff9f;
+                text-shadow: 0 0 10px #00ff9f;
+            }
+            100% {
+                color: #00d9ff;
+                text-shadow: 0 0 10px #00d9ff;
+            }
+        }
+
+        .color-shift {
+            animation: color-shift 4s ease-in-out infinite;
+        }
+
+        /* Terminal cursor effect */
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: var(--primary);
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+
+        /* Interactive element hover scale */
+        .interactive-scale:hover {
+            transform: scale(1.05);
+        }
+
+        /* Tech border animation */
+        @keyframes border-glow {
+            0% {
+                border-color: rgba(0, 217, 255, 0.2);
+                box-shadow: 0 0 5px rgba(0, 217, 255, 0.1);
+            }
+            50% {
+                border-color: rgba(0, 217, 255, 0.6);
+                box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+            }
+            100% {
+                border-color: rgba(0, 217, 255, 0.2);
+                box-shadow: 0 0 5px rgba(0, 217, 255, 0.1);
+            }
+        }
+
+        .border-glow {
+            animation: border-glow 2s ease-in-out infinite;
+        }
+
+        /* Hologram effect */
+        .hologram {
+            perspective: 1000px;
+        }
+
+        .hologram:hover {
+            transform: rotateX(5deg) rotateY(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        /* Code background text effect */
+        .code-bg {
+            position: absolute;
+            opacity: 0.03;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--primary);
+            line-height: 1.5;
+            pointer-events: none;
+            word-break: break-all;
+            white-space: pre-wrap;
+            z-index: -1;
+        }
+
+        /* Enhanced scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 7, 18, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00d9ff, #00ff9f);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #00ff9f, #0080ff);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        /* Hero section enhancement */
+        .hero-title {
+            background: linear-gradient(135deg, #00d9ff 0%, #00ff9f 50%, #0080ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: color-shift 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.3));
+        }
+
+        /* Skill progress bar glow */
+        .skill-progress {
+            background: linear-gradient(90deg, #00d9ff 0%, #00ff9f 50%, #0080ff 100%);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.5), 0 0 20px rgba(0, 255, 159, 0.3);
+        }
+
+        /* Tech badge with glow */
+        .tech-badge {
+            background: rgba(0, 217, 255, 0.1) !important;
+            border: 1px solid rgba(0, 217, 255, 0.3) !important;
+            color: #00d9ff !important;
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(0, 217, 255, 0.2) !important;
+            border-color: #00d9ff !important;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.4) !important;
+        }
+
+        /* Form input glow */
+        .form-group input,
+        .form-group textarea {
+            background: rgba(6, 22, 33, 0.6) !important;
+            border: 1px solid rgba(0, 217, 255, 0.2) !important;
+            color: #e0f7ff !important;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(0, 217, 255, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            background: rgba(6, 22, 33, 0.8) !important;
+            border-color: #00d9ff !important;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.05) !important;
+        }
+
+        /* Enhanced navbar */
+        .navbar {
+            background: rgba(3, 7, 18, 0.8) !important;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2) !important;
+            backdrop-filter: blur(20px);
+        }
+
+        .navbar.scrolled {
+            background: rgba(3, 7, 18, 0.95) !important;
+            border-bottom-color: rgba(0, 217, 255, 0.3) !important;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+        }
+
+        /* Logo dot glow */
+        .logo-dot {
+            background: var(--primary) !important;
+            box-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 217, 255, 0.5) !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 217, 255, 0.5);
+            }
+            50% {
+                opacity: 0.7;
+                box-shadow: 0 0 20px var(--primary), 0 0 40px rgba(0, 217, 255, 0.7);
+            }
+        }
+
+        /* Timeline dot glow */
+        .timeline-dot {
+            background: var(--primary) !important;
+            box-shadow: 0 0 12px var(--primary), 0 0 24px rgba(0, 217, 255, 0.4) !important;
+        }
+
+        /* Social links */
+        .social-link {
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4), inset 0 0 10px rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+        }
+
+        /* Footer enhancement */
+        .footer {
+            background: linear-gradient(135deg, rgba(3, 7, 18, 0.9) 0%, rgba(6, 22, 33, 0.9) 100%) !important;
+            border-top: 1px solid rgba(0, 217, 255, 0.2) !important;
+        }
+
+        /* Light mode adjustments for new theme */
+        [data-theme="light"] {
+            --primary: #0084ff;
+            --primary-hover: #0066cc;
+            --primary-glow: rgba(0, 132, 255, 0.15);
+            --accent: #00b86f;
+            --accent-glow: rgba(0, 184, 111, 0.1);
+            --text-primary: #0d47a1;
+            --text-secondary: #0066cc;
+            --text-muted: #0099ff;
+        }
+
+        [data-theme="light"] body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2ff 50%, #f0f9ff 100%);
+        }
+
+        [data-theme="light"] .navbar {
+            background: rgba(240, 249, 255, 0.9) !important;
+            border-bottom-color: rgba(0, 132, 255, 0.2) !important;
+        }
+
+        [data-theme="light"] .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 132, 255, 0.2);
+        }
+
+        [data-theme="light"] .form-group input,
+        [data-theme="light"] .form-group textarea {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(0, 132, 255, 0.2) !important;
+            color: #0d47a1 !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .matrix-canvas {
+                opacity: 0.1;
+            }
+
+            .scanline {
+                height: 1px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Matrix Code Canvas Background -->
+    <div class="matrix-container">
+        <canvas class="matrix-canvas" id="matrixCanvas"></canvas>
+    </div>
+
+    <!-- Gradient Overlay -->
+    <div class="matrix-overlay"></div>
+
+    <!-- Animated Scanline -->
+    <div class="scanline"></div>
+
     <!-- Floating Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle-fab" aria-label="Toggle theme">
+    <button id="theme-toggle" class="theme-toggle-fab neon-pulse" aria-label="Toggle theme">
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -29,7 +517,7 @@
         <div class="nav-container">
             <a href="#hero" class="nav-logo">
                 <span class="logo-dot"></span>
-                Ganesh Ghodke
+                <span class="glow-text">Ganesh Ghodke</span>
             </a>
             <nav class="nav-menu">
                 <a href="#about" class="nav-link">About</a>
@@ -56,27 +544,27 @@
         <!-- Hero Section -->
         <section id="hero" class="hero-section">
             <div class="container hero-container">
-                <div class="hero-badge animate-fade-in">
+                <div class="hero-badge animate-fade-in neon-border">
                     <span class="badge-dot"></span>
                     <span>Computer Engineering Student • Full Stack Developer • Problem Solver</span>
                 </div>
                 <h1 class="hero-title animate-slide-up">
                     Ganesh Ghodke
                 </h1>
-                <p class="hero-subtitle animate-slide-up-delayed">
-                   Full-Stack Developer | AI & <span class="text-gradient">Machine Learning</span>
+                <p class="hero-subtitle animate-slide-up-delayed glow-text-accent">
+                   Full-Stack Developer | AI & Machine Learning
                 </p>
                 <p class="hero-description animate-slide-up-delayed">
                     Computer Science & Engineering student at VIT Pune specializing in Artificial Intelligence. Passionate about Web Development, IoT-based assistive systems, and Machine Learning.
                 </p>
                 <div class="hero-ctas animate-slide-up-delayed">
-                    <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="#contact" class="btn btn-tertiary">Get in Touch</a>
+                    <a href="#projects" class="btn btn-primary btn-tech">View Projects</a>
+                    <a href="#contact" class="btn btn-tertiary btn-tech">Get in Touch</a>
                 </div>
                 
                 <!-- Mock Dashboard Element -->
                 <div class="hero-visual animate-scale-up">
-                    <div class="mock-window">
+                    <div class="mock-window neon-border">
                         <div class="window-header">
                             <div class="window-dots">
                                 <span class="dot red"></span>
@@ -85,7 +573,7 @@
                             </div>
                             <div class="window-tab">ganesh-ghodke.js</div>
                         </div>
-                        <div class="window-body">
+                        <div class="window-body data-flow">
                             <pre><code class="language-js"><span class="code-keyword">const</span> engineer = {
     name: <span class="code-string">'Ganesh Ghodke'</span>,
     education: <span class="code-string">'B.Tech CSE (AI) @ VIT Pune'</span>,
@@ -110,16 +598,16 @@ bootstrapSystem();</code></pre>
         <!-- About Section -->
         <section id="about" class="about-section scroll-reveal">
             <div class="container">
-                <div class="section-tag">01 / Profile</div>
+                <div class="section-tag glow-text">01 / Profile</div>
                 <h2 class="section-title">The Story So Far</h2>
                 <div class="about-grid">
                     <div class="about-image-container">
-                        <div class="about-image-frame">
+                        <div class="about-image-frame neon-border border-glow">
                             <img src="assets/profile.jpg" alt="Ganesh Ghodke Portrait" class="about-image">
                         </div>
                     </div>
                     <div class="about-content">
-                        <p class="about-lead">
+                        <p class="about-lead glow-text">
                             I am a Computer Science & Engineering student at Vishwakarma Institute of Technology (VIT) Pune, exploring Web Development, AI, and Embedded Systems.
                         </p>
                         <p class="about-body">
@@ -139,10 +627,10 @@ bootstrapSystem();</code></pre>
                             </div>
                         </div>
                         <div class="about-socials">
-                            <a href="https://github.com/Ganesh-1508" target="_blank" class="social-link" aria-label="GitHub">
+                            <a href="https://github.com/Ganesh-1508" target="_blank" class="social-link interactive-glow" aria-label="GitHub">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
                             </a>
-                            <a href="https://www.linkedin.com/in/ganeshghodke01" target="_blank" class="social-link" aria-label="LinkedIn">
+                            <a href="https://www.linkedin.com/in/ganeshghodke01" target="_blank" class="social-link interactive-glow" aria-label="LinkedIn">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
                             </a>
                         </div>
@@ -154,11 +642,11 @@ bootstrapSystem();</code></pre>
         <!-- Skills Section -->
         <section id="skills" class="skills-section scroll-reveal">
             <div class="container">
-                <div class="section-tag">02 / Engine</div>
+                <div class="section-tag glow-text">02 / Engine</div>
                 <h2 class="section-title">Technical Capabilities</h2>
                 <div class="skills-grid">
                     <!-- Languages -->
-                    <div class="skills-card glass-card">
+                    <div class="skills-card glass-card interactive-glow">
                         <div class="skills-header">
                             <span class="skills-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
@@ -198,7 +686,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
                     <!-- Frameworks -->
-                    <div class="skills-card glass-card">
+                    <div class="skills-card glass-card interactive-glow">
                         <div class="skills-header">
                             <span class="skills-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -238,7 +726,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
                     <!-- Databases & Libraries -->
-                    <div class="skills-card glass-card">
+                    <div class="skills-card glass-card interactive-glow">
                         <div class="skills-header">
                             <span class="skills-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path></svg>
@@ -278,7 +766,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
                     <!-- AI & Dev Tools -->
-                    <div class="skills-card glass-card">
+                    <div class="skills-card glass-card interactive-glow">
                         <div class="skills-header">
                             <span class="skills-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
@@ -323,13 +811,13 @@ bootstrapSystem();</code></pre>
         <!-- Projects Section -->
         <section id="projects" class="projects-section scroll-reveal">
             <div class="container">
-                <div class="section-tag">03 / Projects</div>
+                <div class="section-tag glow-text">03 / Projects</div>
                 <h2 class="section-title">Featured Launches</h2>
 
                 <div class="projects-grid">
 
                     <!-- Project 1: Smart Glasses -->
-                    <div class="pcard glass-card">
+                    <div class="pcard glass-card interactive-glow">
                         <div class="pcard-image">
                             <img src="assets/aura_mockup.png" alt="Smart Glasses Project Mockup" class="pcard-img">
                             <div class="pcard-overlay">
@@ -337,7 +825,7 @@ bootstrapSystem();</code></pre>
                             </div>
                         </div>
                         <div class="pcard-body">
-                            <span class="pcard-num">IoT · #01</span>
+                            <span class="pcard-num glow-text">IoT · #01</span>
                             <h3 class="pcard-title">Smart Glasses for Visually Impaired</h3>
                             <p class="pcard-desc">Wearable obstacle detection using Arduino Nano & ultrasonic sensors with real-time buzzer alerts. Paper published in IJARSCT (March 2025).</p>
                             <div class="pcard-tech">
@@ -349,7 +837,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
                     <!-- Project 2: College Exam Portal  -->
-                    <div class="pcard glass-card">
+                    <div class="pcard glass-card interactive-glow">
                         <div class="pcard-image">
                             <img src="assets/exam.png" alt="College Exam Portal" class="pcard-img">
                             <div class="pcard-overlay">
@@ -358,7 +846,7 @@ bootstrapSystem();</code></pre>
                             </div>
                         </div>
                         <div class="pcard-body">
-                            <span class="pcard-num">FULL STACK / WEB APP · #03</span>
+                            <span class="pcard-num glow-text">FULL STACK / WEB APP · #03</span>
                             <h3 class="pcard-title">College Exam Portal</h3>
                             <p class="pcard-desc">A full-stack online examination system with secure authentication, timed exams, instant result generation, and an admin dashboard for student management, analytics, and performance tracking.</p>
                             <div class="pcard-tech">
@@ -372,7 +860,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
                     <!-- Project 3: Book Search  -->
-                    <div class="pcard glass-card">
+                    <div class="pcard glass-card interactive-glow">
                         <div class="pcard-image pcard-code-preview">
                             <div class="pcard-code-inner">
                                 <span class="code-comment">// Algorithmic Engine</span><br>
@@ -392,7 +880,7 @@ bootstrapSystem();</code></pre>
                             </div>
                         </div>
                         <div class="pcard-body">
-                            <span class="pcard-num">Web / DSA · #03</span>
+                            <span class="pcard-num glow-text">Web / DSA · #03</span>
                             <h3 class="pcard-title">Book Search</h3>
                             <p class="pcard-desc">AVL Tree + Trie-powered library search engine and secure exam portal built with JSP, Tomcat, and MySQL.</p>
                             <div class="pcard-tech">
@@ -405,7 +893,7 @@ bootstrapSystem();</code></pre>
                     </div>
 
         <!-- Project 4: Sorting Visualizer -->
-            <div class="pcard glass-card">
+            <div class="pcard glass-card interactive-glow">
                 <div class="pcard-image">
                   <img src="assets/sorting1.png" alt="Sorting Visualizer" class="pcard-img">
                   <div class="pcard-overlay">
@@ -414,7 +902,7 @@ bootstrapSystem();</code></pre>
             </div>
          </div>
      <div class="pcard-body">
-        <span class="pcard-num">WEB DEVELOPMENT · #04</span>
+        <span class="pcard-num glow-text">WEB DEVELOPMENT · #04</span>
         <h3 class="pcard-title">Sorting Visualizer</h3>
         <p class="pcard-desc">
             An interactive web application that visualizes popular sorting algorithms through real-time animations, helping users understand algorithm execution, comparisons, and performance in an engaging way.
@@ -435,7 +923,7 @@ bootstrapSystem();</code></pre>
 <!-- Education Section -->
 <section id="education" class="experience-section scroll-reveal">
     <div class="container">
-        <div class="section-tag">04 / Education</div>
+        <div class="section-tag glow-text">04 / Education</div>
         <h2 class="section-title">Academic Journey</h2>
 
         <div class="timeline">
@@ -448,7 +936,7 @@ bootstrapSystem();</code></pre>
                     <span class="timeline-date">2019 - 2020</span>
                 </div>
 
-                <div class="timeline-content glass-card">
+                <div class="timeline-content glass-card interactive-glow">
                     <h3 class="timeline-role">
                         🎓 Secondary School Certificate (SSC)
                     </h3>
@@ -479,7 +967,7 @@ bootstrapSystem();</code></pre>
                     <span class="timeline-date">2022 - 2025</span>
                 </div>
 
-                <div class="timeline-content glass-card">
+                <div class="timeline-content glass-card interactive-glow">
                     <h3 class="timeline-role">
                         💻 Diploma in Computer Engineering
                     </h3>
@@ -510,7 +998,7 @@ bootstrapSystem();</code></pre>
                     <span class="timeline-date">2025 - Present</span>
                 </div>
 
-                <div class="timeline-content glass-card">
+                <div class="timeline-content glass-card interactive-glow">
                     <h3 class="timeline-role">
                         🚀 Bachelor of Engineering
                     </h3>
@@ -541,10 +1029,10 @@ bootstrapSystem();</code></pre>
         <!-- Resume Section -->
         <section id="resume" class="resume-section scroll-reveal">
             <div class="container">
-                <div class="section-tag">05 / Specs</div>
+                <div class="section-tag glow-text">05 / Specs</div>
                 <h2 class="section-title">System Specs (Resume)</h2>
                 
-                <div class="resume-card glass-card">
+                <div class="resume-card glass-card neon-border">
                     <div class="resume-preview">
                         <div class="resume-preview-header">
                             <div>
@@ -591,7 +1079,7 @@ bootstrapSystem();</code></pre>
                     <div class="resume-overlay">
     <a href="assets/resume/Ganesh_Ghodke_Resume.pdf"
        download
-       class="btn btn-primary">
+       class="btn btn-primary btn-tech">
 
         <svg xmlns="http://www.w3.org/2000/svg"
              viewBox="0 0 24 24"
@@ -616,12 +1104,12 @@ bootstrapSystem();</code></pre>
         <!-- Contact Section -->
         <section id="contact" class="contact-section scroll-reveal">
             <div class="container">
-                <div class="section-tag">06 / Handshake</div>
+                <div class="section-tag glow-text">06 / Handshake</div>
                 <h2 class="section-title">Initiate Connection</h2>
                 
                 <div class="contact-grid">
                     <div class="contact-text-side">
-                        <p class="contact-lead">Let's build something extraordinary together.</p>
+                        <p class="contact-lead glow-text">Let's build something extraordinary together.</p>
                         <p class="contact-desc">
                             Looking for an enthusiastic, skilled software engineering intern with a strong foundation in C++, Web Development, and Artificial Intelligence? Reach out to establish a connection.
                         </p>
@@ -643,7 +1131,7 @@ bootstrapSystem();</code></pre>
                     </div>
                     
                     <div class="contact-form-side">
-                        <form id="contact-form" class="contact-form glass-card">
+                        <form id="contact-form" class="contact-form glass-card neon-border">
                             <div class="form-group">
                                 <label for="name">Your Name</label>
                                 <input type="text" id="from_name" name="name" placeholder="e.g. Ganesh Ghodke" required>
@@ -656,7 +1144,7 @@ bootstrapSystem();</code></pre>
                                 <label for="message">Message Payload</label>
                                 <textarea id="message" name="message" rows="5" placeholder="Send Message..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block" id="form-submit-btn">
+                            <button type="submit" class="btn btn-primary btn-block btn-tech" id="form-submit-btn">
                                 <span>Transmit Message</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="send-icon"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                             </button>
@@ -673,7 +1161,7 @@ bootstrapSystem();</code></pre>
             <div class="footer-left">
                 <a href="#hero" class="footer-logo">
                     <span class="logo-dot"></span>
-                    Ganesh Ghodke
+                    <span class="glow-text">Ganesh Ghodke</span>
                 </a>
                 <p class="footer-copyright">
                     © 2026 Ganesh Ghodke. All rights reserved.<br>
@@ -704,5 +1192,58 @@ bootstrapSystem();</code></pre>
     <!-- Custom Script -->
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <!-- Matrix Code Animation Script -->
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrixCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const charArray = chars.split('');
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(3, 7, 18, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#00d9ff';
+                ctx.font = fontSize + 'px "Fira Code"';
+                ctx.globalAlpha = 0.3;
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            function animate() {
+                drawMatrix();
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
 </body>
 </html>
