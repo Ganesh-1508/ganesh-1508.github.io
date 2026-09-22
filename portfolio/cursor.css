@@ -1,0 +1,5 @@
+/* The supplied cursor is only applied where a precise pointer is available. */
+@media (pointer: fine) {
+  html, body, body * { cursor: url("assets/cursor-glow.png") 18 15, auto; }
+  input, textarea { cursor: text !important; }
+}
