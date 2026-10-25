@@ -17,3 +17,54 @@ theme.addEventListener('click',()=>{document.body.classList.toggle('light');them
 document.querySelectorAll('[data-project]').forEach(button=>button.addEventListener('click',()=>{const p=studies[button.dataset.project];content.innerHTML=`<p class="eyebrow">${p.type}</p><h2>${p.title}</h2><h3>Problem</h3><p>${p.problem}</p><h3>Solution</h3><p>${p.solution}</p><h3>How it works</h3><p>${p.works}</p><h3>Technology decisions</h3><p>${p.tech}</p><p><a href="https://github.com/ganesh-1508" target="_blank" rel="noreferrer">Visit GitHub profile ↗</a></p>`;dialog.showModal();}));
 dialog.querySelector('.close').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
+// Replace these placeholders with the IDs and public key from your EmailJS account.
+// EmailJS public keys are intended for browser use; never put a private key here.
+const emailJsConfig = {
+  serviceId: 'YOUR_EMAILJS_SERVICE_ID',
+  templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+  publicKey: 'YOUR_EMAILJS_PUBLIC_KEY'
+};
+const contactForm = document.querySelector('#contact-form');
+if (contactForm) {
+  const submitButton = contactForm.querySelector('button[type="submit"]');
+  const statusMessage = contactForm.querySelector('.form-status');
+  const idleButtonMarkup = submitButton.innerHTML;
+
+  contactForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!contactForm.reportValidity()) return;
+
+    const configValues = Object.values(emailJsConfig);
+    if (!window.emailjs || configValues.some((value) => !value || value.startsWith('YOUR_'))) {
+      statusMessage.textContent = 'Email service is not configured yet. Please email me directly instead.';
+      statusMessage.dataset.state = 'error';
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.setAttribute('aria-busy', 'true');
+    submitButton.textContent = 'Sending…';
+    statusMessage.textContent = '';
+    delete statusMessage.dataset.state;
+
+    try {
+      await window.emailjs.sendForm(
+        emailJsConfig.serviceId,
+        emailJsConfig.templateId,
+        contactForm,
+        { publicKey: emailJsConfig.publicKey }
+      );
+      statusMessage.textContent = 'Message sent successfully!';
+      statusMessage.dataset.state = 'success';
+      contactForm.reset();
+    } catch (error) {
+      console.error('EmailJS send failed:', error);
+      statusMessage.textContent = 'Message could not be sent. Please try again or email me directly.';
+      statusMessage.dataset.state = 'error';
+    } finally {
+      submitButton.disabled = false;
+      submitButton.removeAttribute('aria-busy');
+      submitButton.innerHTML = idleButtonMarkup;
+    }
+  });
+}
