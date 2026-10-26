@@ -68,3 +68,45 @@ if (contactForm) {
     }
   });
 }
+// Subtle scroll progress, reveal-on-scroll, and pointer-responsive profile lighting.
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const revealItems = document.querySelectorAll('.reveal');
+if (!prefersReducedMotion && 'IntersectionObserver' in window) {
+  document.documentElement.classList.add('motion-ready');
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+
+  revealItems.forEach((element, index) => {
+    element.style.setProperty('--reveal-delay', `${(index % 3) * 80}ms`);
+    revealObserver.observe(element);
+  });
+} else {
+  revealItems.forEach((element) => element.classList.add('is-visible'));
+}
+
+const updateScrollProgress = () => {
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  document.documentElement.style.setProperty('--scroll-progress', String(progress));
+};
+updateScrollProgress();
+window.addEventListener('scroll', updateScrollProgress, { passive: true });
+window.addEventListener('resize', updateScrollProgress);
+
+const profilePanel = document.querySelector('.profile-panel');
+if (profilePanel && !prefersReducedMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  profilePanel.addEventListener('pointermove', (event) => {
+    const bounds = profilePanel.getBoundingClientRect();
+    profilePanel.style.setProperty('--pointer-x', `${event.clientX - bounds.left}px`);
+    profilePanel.style.setProperty('--pointer-y', `${event.clientY - bounds.top}px`);
+  });
+  profilePanel.addEventListener('pointerleave', () => {
+    profilePanel.style.removeProperty('--pointer-x');
+    profilePanel.style.removeProperty('--pointer-y');
+  });
+}
