@@ -20,9 +20,9 @@ dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close();});
 // Replace these placeholders with the IDs and public key from your EmailJS account.
 // EmailJS public keys are intended for browser use; never put a private key here.
 const emailJsConfig = {
-  serviceId: 'YOUR_EMAILJS_SERVICE_ID',
-  templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
-  publicKey: 'YOUR_EMAILJS_PUBLIC_KEY'
+  serviceId: 'service_mxctike',
+  templateId: 'template_b9u8vi5',
+  publicKey: 'PzFvR9Pb_Nrg0wo4t'
 };
 const contactForm = document.querySelector('#contact-form');
 if (contactForm) {
