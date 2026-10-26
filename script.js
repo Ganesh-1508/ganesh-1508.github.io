@@ -59,7 +59,10 @@ if (contactForm) {
       contactForm.reset();
     } catch (error) {
       console.error('EmailJS send failed:', error);
-      statusMessage.textContent = 'Message could not be sent. Please try again or email me directly.';
+      const emailJsDetail = String(error?.text || error?.message || '').trim().slice(0, 160);
+      statusMessage.textContent = emailJsDetail
+        ? `Message could not be sent: ${emailJsDetail}`
+        : 'Message could not be sent. Check EmailJS settings or email me directly.';
       statusMessage.dataset.state = 'error';
     } finally {
       submitButton.disabled = false;
